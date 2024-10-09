@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Layout } from 'antd';
+import FeatureTable from './components/FeatureTable';  // Actualiza la importación del componente FeatureTable
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
-function App() {
+const { Header, Content } = Layout;
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <Layout>
+          <Header style={{ color: 'white', textAlign: 'center' }}>
+            Real-Time Feature Tracker
+          </Header>
+          <Content style={{ padding: '20px' }}>
+            <Routes>
+              <Route path="/" element={<FeatureTable />} />  {/* Actualiza la ruta para mostrar la tabla */}
+            </Routes>
+          </Content>
+        </Layout>
+      </Router>
+    </Provider>
   );
-}
+};
 
 export default App;
