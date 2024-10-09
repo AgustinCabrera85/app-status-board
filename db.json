@@ -2,161 +2,252 @@
   "applications": [
     {
       "app_id": "app_001",
-      "name": "App1",
+      "name": "Fire Detection",
       "description": "Descripcion de App1",
-      "features": [
-        {
-          "feature_id": "feat_001",
-          "name": "Feature1",
-          "version": "v1.0",
-          "description": "Descripcion de Feature1",
-          "environments": {
-            "DEV": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            },
-            "QA": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "SIT": {
-              "health_status": "FAIL",
-              "feature_flag_status": "enabled",
-              "bug_id": "bug_001"
-            },
-            "UAT": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            },
-            "PROD": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            }
-          }
-        },
-        {
-          "feature_id": "feat_002",
-          "name": "Feature2",
-          "version": "v2.1",
-          "description": "Descripcion de Feature2",
-          "environments": {
-            "DEV": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "QA": {
-              "health_status": "FAIL",
-              "feature_flag_status": "disabled",
-              "bug_id": "bug_002"
-            },
-            "SIT": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            },
-            "UAT": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "PROD": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            }
-          }
-        },
-        {
-          "feature_id": "feat_004",
-          "name": "Feature4",
-          "version": "v2.1",
-          "description": "Descripcion de Feature4",
-          "environments": {
-            "DEV": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "QA": {
-              "health_status": "FAIL",
-              "feature_flag_status": "disabled",
-              "bug_id": "bug_002"
-            },
-            "SIT": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            },
-            "UAT": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "PROD": {
-              "health_status": "NA",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            }
-          }
-        }
-      ]
+      "id": "d042"
     },
     {
       "app_id": "app_002",
       "name": "App2",
       "description": "Descripcion de App2",
-      "features": [
-        {
-          "feature_id": "feat_003",
-          "name": "Feature3",
-          "version": "v3.0",
-          "description": "Descripcion de Feature3",
-          "environments": {
-            "DEV": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            },
-            "QA": {
-              "health_status": "FAIL",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "SIT": {
-              "health_status": "Working with issues",
-              "feature_flag_status": "enabled",
-              "bug_id": "bug_001"
-            },
-            "UAT": {
-              "health_status": "OK",
-              "feature_flag_status": "disabled",
-              "bug_id": null
-            },
-            "PROD": {
-              "health_status": "OK",
-              "feature_flag_status": "enabled",
-              "bug_id": null
-            }
-          }
-        }
-      ]
+      "id": "d563"
+    }
+  ],
+  "features": [
+    {
+      "feature_id": "feat_001",
+      "app_id": "app_001",
+      "name": "Feature1",
+      "version": "v1.0",
+      "description": "Descripcion de Feature1",
+      "id": "ff9c"
+    },
+    {
+      "feature_id": "feat_002",
+      "app_id": "app_001",
+      "name": "Feature2",
+      "version": "v2.1",
+      "description": "Descripcion de Feature2",
+      "id": "48ff"
+    },
+    {
+      "feature_id": "feat_003",
+      "app_id": "app_002",
+      "name": "Feature3",
+      "version": "v3.0",
+      "description": "Descripcion de Feature3",
+      "id": "7061"
+    },
+    {
+      "feature_id": "feat_004",
+      "app_id": "app_001",
+      "name": "Feature4",
+      "version": "v2.1",
+      "description": "Descripcion de Feature4",
+      "id": "c0a0"
+    }
+  ],
+  "environments": [
+    {
+      "env_id": "DEV",
+      "name": "Development",
+      "id": "37eb"
+    },
+    {
+      "env_id": "QA",
+      "name": "Quality Assurance",
+      "id": "66a3"
+    },
+    {
+      "env_id": "SIT",
+      "name": "System Integration Testing",
+      "id": "9629"
+    },
+    {
+      "env_id": "UAT",
+      "name": "User Acceptance Testing",
+      "id": "d43f"
+    },
+    {
+      "env_id": "PROD",
+      "name": "Production",
+      "id": "f861"
+    }
+  ],
+  "feature_environments": [
+    {
+      "id": "1",
+      "feature_id": "feat_001",
+      "env_id": "DEV",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "2",
+      "feature_id": "feat_001",
+      "env_id": "QA",
+      "health_status": "Working with issues",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "3",
+      "feature_id": "feat_001",
+      "env_id": "SIT",
+      "health_status": "FAIL",
+      "feature_flag_status": "enabled",
+      "bug_id": "bug_001"
+    },
+    {
+      "id": "4",
+      "feature_id": "feat_001",
+      "env_id": "UAT",
+      "health_status": "Working with issues",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "5",
+      "feature_id": "feat_001",
+      "env_id": "PROD",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "6",
+      "feature_id": "feat_002",
+      "env_id": "DEV",
+      "health_status": "OK",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "7",
+      "feature_id": "feat_002",
+      "env_id": "QA",
+      "health_status": "FAIL",
+      "feature_flag_status": "disabled",
+      "bug_id": "bug_002"
+    },
+    {
+      "id": "8",
+      "feature_id": "feat_002",
+      "env_id": "SIT",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "9",
+      "feature_id": "feat_002",
+      "env_id": "UAT",
+      "health_status": "Working with issues",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "10",
+      "feature_id": "feat_002",
+      "env_id": "PROD",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "11",
+      "feature_id": "feat_003",
+      "env_id": "DEV",
+      "health_status": "Working with issues",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "12",
+      "feature_id": "feat_003",
+      "env_id": "QA",
+      "health_status": "Working with issues",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "13",
+      "feature_id": "feat_003",
+      "env_id": "SIT",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": "bug_001"
+    },
+    {
+      "id": "14",
+      "feature_id": "feat_003",
+      "env_id": "UAT",
+      "health_status": "OK",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "15",
+      "feature_id": "feat_003",
+      "env_id": "PROD",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "16",
+      "feature_id": "feat_004",
+      "env_id": "DEV",
+      "health_status": "OK",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "17",
+      "feature_id": "feat_004",
+      "env_id": "QA",
+      "health_status": "FAIL",
+      "feature_flag_status": "disabled",
+      "bug_id": "bug_002"
+    },
+    {
+      "id": "18",
+      "feature_id": "feat_004",
+      "env_id": "SIT",
+      "health_status": "OK",
+      "feature_flag_status": "enabled",
+      "bug_id": null
+    },
+    {
+      "id": "19",
+      "feature_id": "feat_004",
+      "env_id": "UAT",
+      "health_status": "Working with issues",
+      "feature_flag_status": "disabled",
+      "bug_id": null
+    },
+    {
+      "id": "20",
+      "feature_id": "feat_004",
+      "env_id": "PROD",
+      "health_status": "NA",
+      "feature_flag_status": "enabled",
+      "bug_id": null
     }
   ],
   "bugs": [
     {
       "bug_id": "bug_001",
       "description": "Error critico en la funcionalidad X",
-      "status": "open"
+      "status": "open",
+      "id": "54dd"
     },
     {
       "bug_id": "bug_002",
       "description": "Problema menor en la funcionalidad Y",
-      "status": "closed"
+      "status": "closed",
+      "id": "3c7a"
     }
   ]
 }

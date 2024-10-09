@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Usa la constante API_URL para asegurar que todas las solicitudes vayan al puerto correcto
 const API_URL = 'http://localhost:5000';
 
 // Crea una instancia de Axios con la base URL configurada
@@ -11,76 +10,110 @@ const api = axios.create({
   },
 });
 
-// Función para obtener la lista de aplicaciones con sus features y ambientes
-export const getApplicationsWithFeatures = async () => {
+// Función para obtener la lista de aplicaciones
+export const getApplications = async () => {
   try {
-    // Obtener todas las aplicaciones con sus features anidadas
     const response = await api.get('/applications');
     return response.data;
   } catch (error) {
-    console.error("Error fetching applications with features:", error);
+    console.error('Error fetching applications:', error);
     throw error;
   }
 };
 
-// Función para obtener los bugs asociados a un feature
-export const getBugs = async (featureId) => {
+// Función para obtener los features
+export const getFeatures = async () => {
   try {
-    const response = await api.get(`/bugs?feature_id=${featureId}`);
+    const response = await api.get('/features');
     return response.data;
   } catch (error) {
-    console.error(`Error fetching bugs for feature ${featureId}:`, error);
-    throw error;  // Lanza el error para manejarlo en el componente
+    console.error('Error fetching features:', error);
+    throw error;
   }
 };
 
-// Función para convertir el nombre del ambiente en el env_id correspondiente
-const getEnvIdFromEnvironment = (environment) => {
-  const environmentMap = {
-    "DEV": "env_001",
-    "QA": "env_002",
-    "SIT": "env_003",
-    "UAT": "env_004",
-    "PROD": "env_005"
-  };
-  return environmentMap[environment] || null;
+// Función para obtener los estados de los features en los ambientes
+export const getFeatureEnvironments = async () => {
+  try {
+    const response = await api.get('/feature_environments');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching feature environments:', error);
+    throw error;
+  }
 };
 
-// Función para actualizar solo el estado del ambiente de un feature específico en una aplicación
-export const updateFeatureStatus = async (appId, featureId, environment, newStatus) => {
+// Función para obtener aplicaciones con features y ambientes (unidos)
+export const getApplicationsWithFeatures = async () => {
   try {
-    // Obtener la aplicación con el app_id correcto
-    const appResponse = await api.get(`/applications?app_id=${appId.trim()}`);
-    const application = appResponse.data[0]; // Aseguramos que tomamos la primera aplicación que coincide
+    // Obtener todas las aplicaciones
+    const applications = await getApplications();
 
-    if (!application) {
-      throw new Error(`No se encontró la aplicación con app_id ${appId}`);
-    }
+    // Obtener todos los features
+    const features = await getFeatures();
 
-    // Buscar el feature dentro de la aplicación
-    const feature = application.features.find(f => f.feature_id === featureId);
+    // Obtener los estados de los features en los ambientes
+    const featureEnvironments = await getFeatureEnvironments();
 
-    if (!feature) {
-      throw new Error(`No se encontró el feature con ID ${featureId} en la aplicación ${appId}`);
-    }
+    // Crear el formato de datos anidado como en la estructura anterior
+    const formattedData = applications.map((app) => {
+      const appFeatures = features
+        .filter((feature) => feature.app_id === app.app_id)
+        .map((feature) => {
+          // Asociamos cada feature con sus estados en los diferentes ambientes
+          const featureEnvs = featureEnvironments.filter(env => env.feature_id === feature.feature_id);
 
-    // Actualizar solo el estado del ambiente en el feature
-    feature.environments[environment].health_status = newStatus;
+          // Creamos un objeto 'environments' que contiene los estados de los diferentes ambientes
+          const environments = {
+            DEV: featureEnvs.find(env => env.env_id === 'DEV')?.health_status || 'N/A',
+            QA: featureEnvs.find(env => env.env_id === 'QA')?.health_status || 'N/A',
+            SIT: featureEnvs.find(env => env.env_id === 'SIT')?.health_status || 'N/A',
+            UAT: featureEnvs.find(env => env.env_id === 'UAT')?.health_status || 'N/A',
+            PROD: featureEnvs.find(env => env.env_id === 'PROD')?.health_status || 'N/A',
+          };
 
-    // Hacer el PATCH con la aplicación completa actualizada
-    const response = await api.patch(`/applications?app_id=${appId.trim()}`, {
-      app_id: appId,
-      features: application.features
+          return {
+            ...feature,
+            environments,  // Agregamos los ambientes y sus estados al feature
+          };
+        });
+
+      return {
+        ...app,
+        features: appFeatures,
+      };
+    });
+
+    return formattedData;
+  } catch (error) {
+    console.error('Error fetching applications with features:', error);
+    throw error;
+  }
+};
+
+
+// Función para actualizar el estado de un feature en un ambiente usando el ID del feature_environment
+export const updateFeatureEnvironment = async (id, newStatus) => {
+  try {
+    // Hacer un PATCH directamente al recurso con el ID (id)
+    const response = await api.patch(`/feature_environments/${id}`, {
+      health_status: newStatus,
     });
 
     return response.data;
   } catch (error) {
-    console.error("Error updating feature status:", error);
+    console.error('Error updating feature environment status:', error);
     throw error;
   }
 };
 
-
-
-
-
+// Obtener la relación feature_environment dado un feature_id y un env_id
+export const getFeatureEnvironment = async (featureId, envId) => {
+  try {
+    const response = await api.get(`/feature_environments?feature_id=${featureId}&env_id=${envId}`);
+    return response.data[0];  // Debería retornar el primer resultado que es la relación
+  } catch (error) {
+    console.error('Error fetching feature_environment:', error);
+    throw error;
+  }
+};

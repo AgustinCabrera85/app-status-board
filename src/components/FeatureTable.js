@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Tag, Spin } from 'antd';
-import { getApplicationsWithFeatures, updateFeatureStatus } from '../services/api';
-import StatusDropdown from './StatusDropdown'; // Importamos el nuevo componente StatusDropdown
+import { getApplicationsWithFeatures, getFeatureEnvironment, updateFeatureEnvironment } from '../services/api'; 
+import StatusDropdown from './StatusDropdown';
 
 // Función para determinar el color del tag basado en el estado
 const statusColor = (status) => {
@@ -20,7 +20,6 @@ const statusColor = (status) => {
 const FeatureTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [updateRequest, setUpdateRequest] = useState(null);
 
   // Obtener las aplicaciones y features
   useEffect(() => {
@@ -29,7 +28,7 @@ const FeatureTable = () => {
       try {
         const applicationsData = await getApplicationsWithFeatures();
         const formattedData = formatDataForTable(applicationsData);
-        setData(formattedData);
+        setData(formattedData); // Asignamos los datos formateados a 'data'
       } catch (error) {
         console.error('Error fetching features:', error);
       }
@@ -39,56 +38,49 @@ const FeatureTable = () => {
     fetchFeatures();
   }, []);
 
-  // Manejar la actualización de features
-  useEffect(() => {
-    if (updateRequest) {
-      const { appId, featureId, environment, newStatus } = updateRequest;
+  // Manejar la actualización de features en el backend y el frontend
+  const handleStatusChange = async (appId, featureId, environment, newStatus) => {
+    try {
+      const featureEnvironment = await getFeatureEnvironment(featureId, environment);
+      if (!featureEnvironment || !featureEnvironment.id) {
+        throw new Error('No se encontró el ID de feature_environment');
+      }
 
-      const updateFeature = async () => {
-        try {
-          await updateFeatureStatus(appId, featureId, environment, newStatus);
-          console.log(`Updated feature ${featureId} in ${environment} to ${newStatus}`);
-        } catch (error) {
-          console.error("Error updating feature status in backend:", error);
-        }
-      };
-
-      updateFeature();
-    }
-  }, [updateRequest]);
-
-  // Función para manejar el cambio de estado
-  const handleStatusChange = (appId, featureId, environment, newStatus) => {
-    setData((prevData) =>
-      prevData.map((app) => {
-        if (app.app_id === appId) {
-          const updatedFeatures = app.features.map((feature) => {
-            if (feature.feature_id === featureId) {
-              return {
-                ...feature,
-                environments: {
-                  ...feature.environments,
-                  [environment]: {
-                    ...feature.environments[environment],
-                    health_status: newStatus,
+      // Actualizar los datos en el frontend inmediatamente
+      setData((prevData) =>
+        prevData.map((app) => {
+          if (app.app_id === appId) {
+            const updatedFeatures = app.features.map((feature) => {
+              if (feature.feature_id === featureId) {
+                return {
+                  ...feature,
+                  environments: {
+                    ...feature.environments,
+                    [environment]: {
+                      ...feature.environments[environment],
+                      health_status: newStatus,
+                    },
                   },
-                },
-              };
-            }
-            return feature;
-          });
+                };
+              }
+              return feature;
+            });
 
-          return {
-            ...app,
-            features: updatedFeatures,
-          };
-        }
-        return app;
-      })
-    );
+            return {
+              ...app,
+              features: updatedFeatures,
+            };
+          }
+          return app;
+        })
+      );
 
-    // Actualiza el estado para realizar la petición a la API
-    setUpdateRequest({ appId, featureId, environment, newStatus });
+      // Actualizar el estado en el backend usando el ID encontrado
+      await updateFeatureEnvironment(featureEnvironment.id, newStatus);
+      console.log(`Updated feature ${featureId} in ${environment} to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating feature status:', error);
+    }
   };
 
   // Función para renderizar el estado de la lista desplegable
@@ -97,15 +89,17 @@ const FeatureTable = () => {
       return <Tag color={statusColor(status)}>{status || 'NA'}</Tag>;
     }
 
+    const currentStatus = record.environments?.[environment]?.health_status || 'N/A'; // Leer correctamente el valor del backend
+
     return (
       <StatusDropdown
-        status={status}
+        status={currentStatus}
         onStatusChange={(newStatus) => handleStatusChange(appId, record.feature_id, environment, newStatus)}
       />
     );
   };
 
-  // Formatear los datos para la tabla
+  // Refactorización de la función para formatear los datos correctamente
   const formatDataForTable = (applications) => {
     return applications.map((app) => ({
       key: app.app_id,
@@ -119,12 +113,12 @@ const FeatureTable = () => {
         key: feature.feature_id,
         feature_id: feature.feature_id,
         application: feature.name,
-        DEV: feature.environments?.DEV?.health_status,
-        QA: feature.environments?.QA?.health_status,
-        SIT: feature.environments?.SIT?.health_status,
-        UAT: feature.environments?.UAT?.health_status,
-        PROD: feature.environments?.PROD?.health_status,
-        environments: feature.environments,
+        DEV: feature.environments?.DEV?.health_status || 'N/A',
+        QA: feature.environments?.QA?.health_status || 'N/A',
+        SIT: feature.environments?.SIT?.health_status || 'N/A',
+        UAT: feature.environments?.UAT?.health_status || 'N/A',
+        PROD: feature.environments?.PROD?.health_status || 'N/A',
+        environments: feature.environments, // Asegurarnos de que environments estén bien formateados
         app_id: app.app_id,
       })),
     }));
@@ -134,8 +128,8 @@ const FeatureTable = () => {
   const aggregateEnvironmentStatus = (features, environment) => {
     const states = features.map((feature) => feature.environments?.[environment]?.health_status);
     if (states.every((state) => state === 'OK')) return 'OK';
-    if ((states.some((state) => state === 'OK')) && (states.some((state)=> state === 'NA')) && (!states.some((state)=> state === 'FAIL'))) return 'OK';
-    if ((states.some((state) => state === 'OK')) && (states.some((state)=> state === 'NA')) && (!states.some((state)=> state === 'Working with issues'))) return 'OK';
+    if ((states.some((state) => state === 'OK')) && (states.some((state)=> state === 'N/A')) && (!states.some((state)=> state === 'FAIL'))) return 'OK';
+    if ((states.some((state) => state === 'OK')) && (states.some((state)=> state === 'N/A')) && (!states.some((state)=> state === 'Working with issues'))) return 'OK';
     if (states.some((state) => state === 'FAIL')) return 'FAIL';
     return 'Working with issues';
   };
