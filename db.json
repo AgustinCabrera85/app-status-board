@@ -3,13 +3,13 @@
     {
       "app_id": "app_001",
       "name": "App1",
-      "description": "Descripción de App1",
+      "description": "Descripcion de App1",
       "features": [
         {
           "feature_id": "feat_001",
           "name": "Feature1",
           "version": "v1.0",
-          "description": "Descripción de Feature1",
+          "description": "Descripcion de Feature1",
           "environments": {
             "DEV": {
               "health_status": "OK",
@@ -42,10 +42,10 @@
           "feature_id": "feat_002",
           "name": "Feature2",
           "version": "v2.1",
-          "description": "Descripción de Feature2",
+          "description": "Descripcion de Feature2",
           "environments": {
             "DEV": {
-              "health_status": "OK",
+              "health_status": "Working with issues",
               "feature_flag_status": "disabled",
               "bug_id": null
             },
@@ -70,19 +70,52 @@
               "bug_id": null
             }
           }
+        },
+        {
+          "feature_id": "feat_004",
+          "name": "Feature4",
+          "version": "v2.1",
+          "description": "Descripcion de Feature4",
+          "environments": {
+            "DEV": {
+              "health_status": "Working with issues",
+              "feature_flag_status": "disabled",
+              "bug_id": null
+            },
+            "QA": {
+              "health_status": "FAIL",
+              "feature_flag_status": "disabled",
+              "bug_id": "bug_002"
+            },
+            "SIT": {
+              "health_status": "OK",
+              "feature_flag_status": "enabled",
+              "bug_id": null
+            },
+            "UAT": {
+              "health_status": "Working with issues",
+              "feature_flag_status": "disabled",
+              "bug_id": null
+            },
+            "PROD": {
+              "health_status": "NA",
+              "feature_flag_status": "enabled",
+              "bug_id": null
+            }
+          }
         }
       ]
     },
     {
       "app_id": "app_002",
       "name": "App2",
-      "description": "Descripción de App2",
+      "description": "Descripcion de App2",
       "features": [
         {
           "feature_id": "feat_003",
           "name": "Feature3",
           "version": "v3.0",
-          "description": "Descripción de Feature3",
+          "description": "Descripcion de Feature3",
           "environments": {
             "DEV": {
               "health_status": "OK",
@@ -117,7 +150,7 @@
   "bugs": [
     {
       "bug_id": "bug_001",
-      "description": "Error crítico en la funcionalidad X",
+      "description": "Error critico en la funcionalidad X",
       "status": "open"
     },
     {
